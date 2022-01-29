@@ -220,15 +220,37 @@ function AddonMessage(message)
    windower.add_to_chat(1, ('\31\200[\31\05SuperMacro\31\200]\31\207 '.. " " .. message))
 end
 
+function CheckBarsXML()
+   local playerName = windower.ffxi.get_player().name
+   local f = files.new('data/bars.xml')
+
+   if f:exists() == false then
+      AddonMessage('Missing data/bars.xml file.')
+      AddonMessage('Creating default data/bars.xml file.')
+      f:write('<bars>\n')
+      f:append('  <'.. playerName ..'>\n' )
+      f:append('     <bar>changeMe.txt</bar>\n')
+      f:append('  </'.. playerName ..'>\n' )
+      f:append('</bars>')   
+   end
+
+   return f:exists()
+
+end
+
 function ParseBarData()
+
+   local playerName = windower.ffxi.get_player().name
 
    local barsXML = xml.read('data/bars.xml')
 
    if barsXML == nil then
-      AddonMessage('Error loading data/bars.xml. Is it missing?')
+      AddonMessage('Error loading data/bars.xml. Check for syntax errors.')
+      AddonMessage('Unloading SuperMacro...')
+      windower.send_command('lua unload supermacro')
    else
       for key, player in ipairs(barsXML.children) do
-         if player.name == windower.ffxi.get_player().name then
+         if player.name == playerName then
             for key, bar in ipairs (player.children) do
                if bar.name == 'bar' then
                   if totalBarCount == nil then
@@ -240,10 +262,9 @@ function ParseBarData()
             end
             AddonMessage('Found '.. totalBarCount .. ' character bars for ')
          else
-            AddonMessage('No profile found for '.. windower.ffxi.get_player().name ..'\31\207 in data/bars.xml')
-            AddonMessage('Add character profile to data/bars.xml and try again.')
-            AddonMessage('Unloading SuperMacro...')
-            windower.send_command('lua unload supermacro')
+            AddonMessage('No profile found for '.. playerName ..'\31\207 in data/bars.xml')
+            AddonMessage('Adding default profile for '.. playerName .. '\31\207.')
+            AddCharToBars()
          end
       end
    end
@@ -477,6 +498,7 @@ function FontToPixel(fSize)
 end
 
 windower.register_event('load', function()
+   CheckBarsXML()
    BuildActionBar()
    ChangeCursorColor()
 end)
