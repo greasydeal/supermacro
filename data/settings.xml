@@ -1,0 +1,30 @@
+<?xml version="1.1" ?>
+<settings>
+    <global>
+        <buttonSizeX>60</buttonSizeX>
+        <ButtonSizeY>45</ButtonSizeY>
+        <buttonAlpha>255</buttonAlpha>
+        <buttonColorBlue>0</buttonColorBlue>
+        <buttonColorGreen>0</buttonColorGreen>
+        <buttonColorRed>0</buttonColorRed>
+        <buttonCount>10</buttonCount>
+        <buttonTextAlpha>0</buttonTextAlpha>
+        <buttonTextBlue>0</buttonTextBlue>
+        <buttonTextGreen>0</buttonTextGreen>
+        <buttonTextRed>0</buttonTextRed>
+        <buttonTextSize1>8</buttonTextSize1>
+        <buttonTextSize2>10</buttonTextSize2>
+        <charBarCount>0</charBarCount>
+        <cursorAlpha>255</cursorAlpha>
+        <cursorBlinkTime>1</cursorBlinkTime>
+        <cursorColorBlue>0</cursorColorBlue>
+        <cursorColorGreen>0</cursorColorGreen>
+        <cursorColorRed>100</cursorColorRed>
+        <globalBarCount>3</globalBarCount>
+        <pageChangeKey>tab</pageChangeKey>
+        <posX>450</posX>
+        <posY>650</posY>
+        <spacingX>5</spacingX>
+        <spacingY>5</spacingY>
+    </global>
+</settings>
