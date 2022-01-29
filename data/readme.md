@@ -1,4 +1,4 @@
-- Use <<Character Name>>.xml to assign bar profiles to your characters.
+- Use (Character Name).xml to assign bar profiles to your characters.
 - This file must be formatted correctly or else it will not load.
 - Format as follows:
 
