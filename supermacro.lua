@@ -93,24 +93,6 @@ do
    totalBarCount = nil
 end
 
-----------------------------------------
--- Bar defaults / settings
-----------------------------------------
---[[
-do
-   local barDefaults = T{}
-   barDefaults.bar1 = ''
-   barDefaults.bar1.type = 'job'
-   barDefaults.bar2 = 'changeme.xml'
-   barDefaults.bar2.type = 'custom'
-   barDefaults.bar3 = 'changeme.xml'
-   barDefaults.bar3.type = 'custom'
-   barDefaults.bar4 = 'changeme.xml'
-   barDefaults.bar4.type = 'custom'
-
-end
-]]--
-
 keys = S{}
 allowedKeys = {'numpad1','numpad2','numpad3','numpad4','numpad5','numpad6','numpad7','numpad8','numpad9','numpad0','tab'}
 
@@ -220,53 +202,191 @@ function AddonMessage(message)
    windower.add_to_chat(1, ('\31\200[\31\05SuperMacro\31\200]\31\207 '.. " " .. message))
 end
 
-function CheckBarsXML()
+function GetBarsXML()
    local playerName = windower.ffxi.get_player().name
-   local f = files.new('data/bars.xml')
+   local f = files.new('data/'..playerName..'.xml')
 
    if f:exists() == false then
-      AddonMessage('Missing data/bars.xml file.')
-      AddonMessage('Creating default data/bars.xml file.')
+      AddonMessage('Missing data/'..playerName..'\31\207.xml character profile.')
+      AddonMessage('Creating default data/'..playerName..'\31\207.xml')
+      AddonMessage('You will need to edit this file to customize your character specific action bars.')
+      AddonMessage('Visit https://github.com/greasydeal/supermacro for more info.')
       f:write('<bars>\n')
-      f:append('  <'.. playerName ..'>\n' )
-      f:append('     <bar>changeMe.txt</bar>\n')
-      f:append('  </'.. playerName ..'>\n' )
+      f:append('  <bar>default.xml</bar>\n')
       f:append('</bars>')   
    end
 
-   return f:exists()
+   if f:exists() then
+      fXML = xml.read(f)
+      if fXML == nil then
+         AddonMessage('Error parsing data/'..playerName..'\31\207.xml. Check for syntax errors.')
+      else
+         return fXML
+      end
+   end
 
 end
 
+function GetJobBarsXML()
+   local playerName = windower.ffxi.get_player().name
+   local playerJob = windower.ffxi.get_player().main_job
+   local playerSubJob = windower.ffxi.get_player().sub_job
+   local fString = 'data/'..playerName..'_'..playerJob..'_'..playerSubJob..'.xml'
+   local f = files.new(fString)
+
+   if f:exists() == false then
+      fString = 'data/'..playerName..'_'..playerJob..'.xml'
+      f = files.new(fString)
+      if f:exists() == false then
+         AddonMessage('Missing '.. playerJob ..'\31\207 job profile for ' .. playerName .. '\31\207.')
+         AddonMessage('Creating default data/'..playerName..'_'..playerJob..'\31\207.xml')
+         AddonMessage('You will need to edit this file to customize your job specific action bars.')
+         AddonMessage('Visit https://github.com/greasydeal/supermacro for more info.')
+         f:write('<bars>\n')
+         f:append('  <bar>default.xml</bar>\n')
+         f:append('</bars>')   
+      end
+   end
+
+   if f:exists() then
+      fXML = xml.read(f)
+      if fXML == nil then
+         AddonMessage('Error parsing '..fString..'\31\207. Check for syntax errors.')
+      else
+         return fXML
+      end
+   end
+end
+
+---------------------------------------------------------------
+-- Parses bar .xml files for button data
+-- Accepts filename as string
+-- Returns an array of button data arrays
+---------------------------------------------------------------
+function GetButtonData(bar)
+   local defaultData = {'#empty#','#empty#','/echo No command set','/echo No command set','#empty','#empty#'}
+   local actionBar = {}
+   for i=1, buttonCount do
+      actionBar[i] = {'#empty#','#empty#','/echo No command set','/echo No command set','#empty','#empty#'}
+   end
+   
+   barXML = xml.read('data/bars/'..bar)
+   
+   for key, button in ipairs(barXML.children) do --[for each button in the bar]
+
+      local data = {'#empty#','#empty#','/echo No command set','/echo No command set','#empty','#empty#'}
+      local buttonNumber = tonumber(button.name)
+
+      if type(buttonNumber) == 'number' then --[check element name = number]
+         if buttonNumber <= buttonCount then --[only add buttons up to button count in config]
+
+            for key, field in ipairs(button.children) do
+               if field.name == 'text1' then
+                  if field.children ~= nil then
+                     if field.children[1] ~= nil then
+                        data[1] = field.children[1].value
+                     end
+                  end
+               elseif field.name == 'text2' then
+                  if field.children ~= nil then
+                     if field.children[1] ~= nil then
+                        data[2] = field.children[1].value
+                     end
+                  end
+               elseif field.name == 'action' then
+                  if field.children ~= nil then
+                     if field.children[1] ~= nil then
+                        data[3] = field.children[1].value
+                     end
+                  end
+               elseif field.name == 'modAction' then
+                  if field.children ~= nil then
+                     if field.children[1] ~= nil then
+                        data[4] = field.children[1].value
+                     end
+                  end
+               elseif field.name == 'modText1' then
+                  if field.children ~= nil then
+                     if field.children[1] ~= nil then
+                        data[5] = field.children[1].value
+                     end
+                  end
+               elseif field.name == 'modText2' then
+                  if field.children ~= nil then
+                     if field.children[1] ~= nil then
+                        data[6] = field.children[1].value
+                     end
+                  end   
+               end
+            end
+
+            actionBar[buttonNumber] = data --[Add button data to the matching index number (button number) of the action bar array]
+
+         end
+      end
+   end
+
+   return actionBar
+
+end
+
+---------------------------------------------------------------
+-- Parses profile .xml files for bar data
+---------------------------------------------------------------
 function ParseBarData()
 
    local playerName = windower.ffxi.get_player().name
-
-   local barsXML = xml.read('data/bars.xml')
+   local barsXML = GetBarsXML()
+   local jobBarsXML = GetJobBarsXML()
+   local barList = T{}
+   local charBarCount  = 0
+   local jobBarCount = 0
 
    if barsXML == nil then
-      AddonMessage('Error loading data/bars.xml. Check for syntax errors.')
+      AddonMessage('Error loading data/'..playerName..'\31\207.xml. Check for syntax errors.')
       AddonMessage('Unloading SuperMacro...')
       windower.send_command('lua unload supermacro')
    else
-      for key, player in ipairs(barsXML.children) do
-         if player.name == playerName then
-            for key, bar in ipairs (player.children) do
-               if bar.name == 'bar' then
-                  if totalBarCount == nil then
-                     totalBarCount = 1
-                  else
-                     totalBarCount = totalBarCount + 1
-                  end
+      for key, bar in ipairs (barsXML.children) do
+         if bar.name == 'bar' then
+            if bar.children[1].value ~= nil then
+               if totalBarCount == nil then
+                  totalBarCount = 1
+               else
+                  totalBarCount = totalBarCount + 1
                end
+               barList:append(bar.children[1].value)
             end
-            AddonMessage('Found '.. totalBarCount .. ' character bars for ')
-         else
-            AddonMessage('No profile found for '.. playerName ..'\31\207 in data/bars.xml')
-            AddonMessage('Adding default profile for '.. playerName .. '\31\207.')
-            AddCharToBars()
          end
       end
+      AddonMessage('Found '.. totalBarCount .. ' character bar(s) for '.. playerName.. '\31\207.')
+   end
+
+   charBarCount = totalBarCount
+
+   if jobBarsXML == nil then
+      AddonMessage('Error loading job specific bars. Check for syntax errors.')
+      AddonMessage('Unloading SuperMacro...')
+      windower.send_command('lua unload supermacro')
+   else
+      for key, bar in ipairs (jobBarsXML.children) do
+         if bar.name == 'bar' then
+            if bar.children[1].value ~= nil then
+               if totalBarCount == nil then
+                  totalBarCount = 1
+               else
+                  totalBarCount = totalBarCount + 1
+               end
+               barList:append(bar.children[1].value)
+            end
+         end
+      end
+      jobBarCount = totalBarCount - charBarCount
+      AddonMessage('Found '.. jobBarCount .. ' job specific bar(s) for '.. playerName.. '\31\207.')
+   end
+
+   if barList ~= nil then
+      return barList
    end
 end
 
@@ -276,7 +396,7 @@ end
 --------------------------------------------------------------------------
 function BuildActionBar()
 
-   ParseBarData()
+   barList = ParseBarData()
 
    buttonX = buttonXStart
    buttonY = buttonYStart
@@ -287,9 +407,10 @@ function BuildActionBar()
    -- Itterates though bar and button counts creating button objects and stores them in a table sturcture as follows:
    -- macroBar[#Bar] >> macroButtonList[#Button] >> buttonContainer [(1)buttonUI[(1)buttonText_1,(2)buttonText_1], (2)buttonData]
    ---------------------------------------------------------------------------------------------
-   for i=1,totalBarCount do
+   for i, bar in pairs(barList) do
 
       macroButtonList = T{} --meant to be a list of buttonContainers
+      barData = GetButtonData(bar)
 
       for j=1,buttonCount do
 
@@ -300,11 +421,11 @@ function BuildActionBar()
          buttonUI = T{} -- buttonBg, buttonText_1
 
          -- Add data to buttonData table
-         buttonData:append('Test') -- Text Line 1
-         buttonData:append('Line2') -- Text Line 2
-         buttonData:append('test command '.. i ..' '.. j) -- command
-         buttonData:append('m.test command '.. i ..' '.. j) -- modified command
-         buttonData:append('Action') -- Button type
+         buttonData:append(barData[j][1]) -- Text Line 1
+         buttonData:append(barData[j][2]) -- Text Line 2
+         buttonData:append(barData[j][3]) -- command
+         buttonData:append(barData[j][4]) -- modified command
+         buttonData:append(barData[j][5]) -- Button type
 
          -- Create button background
          buttonBg = images.new()
@@ -346,17 +467,6 @@ function BuildActionBar()
             textOffsetY_2 = textOffsetY_1 + lineYOffset
             buttonText_2:pos(buttonX + textOffsetX_2, buttonY + textOffsetY_2)
          end
-
-         --[[
-         if j <= 2 then
-            print('-------'..j..'-------')
-            print('X1: '..textOffsetX_1)
-            print('Y1: '..textOffsetY_1)
-            print('X2: '..textOffsetX_2)
-            print('Y2: '..textOffsetY_2)
-            print('BUTTON: '.. textExtentsY_2)
-         end
-         ]]--
 
          -- Combine button UI and data into container
          buttonUI:append(buttonBg)
@@ -407,6 +517,7 @@ function HideMacroBars()
    end
 end
 
+--Checks if key pressed is a passthrough key
 function CheckKeyAllow(key)
    for _,temp in pairs(allowedKeys) do
       if temp == key then
@@ -416,34 +527,38 @@ function CheckKeyAllow(key)
    return false
 end
 
+-- Checks if key pressed is an arrow key
 function CheckKeyArrows(key)
    if (key == 'up') or (key == 'down') or (key == 'left') or (key == 'right') then
       return true
    end
 end
 
+-- Checks if key pressed is the enter key
 function CheckKeyEnter(key)
    if (key == 'enter') then
       return true
    end
 end
 
+-- Checks if they key pressed is the mod key
 function CheckModKey(key)
    if (key == '`') then
       return true
    end
 end
 
+-- Sends a passthough key
 function SendKeySignal(key, down)
    if down then
       state = 'down'
    else
       state = 'up'
    end
-   print('SUPERMACRO: Sending ' .. key .. ' ' .. state)
    windower.send_command('setkey '.. key .. ' ' .. state)
 end
 
+-- Moves the cursor index
 function MoveCursor(key)
    cursorBar = cursor[1]
    cursorButton = cursor[2]
@@ -478,6 +593,7 @@ function MoveCursor(key)
    ChangeCursorColor()
 end
 
+-- Changes the color of the button currently selected by cursor
 function ChangeCursorColor()
 
    cursorBar = cursor[1]
@@ -498,7 +614,7 @@ function FontToPixel(fSize)
 end
 
 windower.register_event('load', function()
-   CheckBarsXML()
+   GetBarsXML()
    BuildActionBar()
    ChangeCursorColor()
 end)
@@ -524,10 +640,10 @@ windower.register_event('keyboard', function(dik, down, flags, blocked)
       elseif CheckKeyEnter(key) and down and menuOpen then
          if modMode == false then
             action = macroBar[cursor[1]][cursor[2]][2][3]
-            windower.send_command('input /echo '.. action)
+            windower.send_command('input '.. action)
          else
             action = macroBar[cursor[1]][cursor[2]][2][4]
-            windower.send_command('input /echo '.. action)
+            windower.send_command('input '.. action)
          end
       end
    end
