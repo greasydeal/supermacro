@@ -1,4 +1,6 @@
+<!-- If you copy/paste form this file be sure to remove all comments! -->
 <bars> 
-   <bar>example.xml</bar> 
-   <bar>anotherexample.xml</bar> 
+   <bar>example.xml</bar> <!-- loads a new bar from data/bars/example.xml -->
+   <bar>anotherexample.xml</bar> <!-- loads a new bar from data/bars/anotherexample.xml -->
+   <bar>SubDirExample/example.xml</bar>  <!-- loads a new bar from data/bars/SubDirExample/example.xml  -->
 </bars>
