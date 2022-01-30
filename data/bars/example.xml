@@ -1,0 +1,10 @@
+<bar>
+    <button>
+        <text1>Test</text>
+        <text2>Button</text>
+        <action>/echo test</action>
+        <m.text2>m.Test</m.text2>
+        <m.text1>m.Button</m.text1>
+        <m.action>/echo m.test</m.action>
+    </button>
+</bar>
