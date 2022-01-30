@@ -14,8 +14,8 @@
 </bars>
 ```
 
-- Substitude `SomeFile.xml` and `SomeotherFile.xml` with actual files.
-- Each `<bar>` element nested within a character element will add a action bar for that character.
+- Substitude `SomeFile.xml` and `SomeOtherFile.xml` with actual files.
+- Each `<bar>` element nested within the `<bars>` element will add an action bar for that character.
 - The value within a `<bar>` element should be an xml file that contains button data for the action bar. 
 - The xml file referenced needs to be stored under `/data/bars/` or a subdirectory of `/dat/bars/`.
 - If the xml file is saved in a subdirectory of `/data/bars/` then the subdirectory must be included as well.
