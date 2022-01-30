@@ -25,4 +25,5 @@
 - The referenced `.xml` file needs to be stored under `/data/bars/` or a subdirectory of `/dat/bars/`.
 - If the referenced `.xml` file is saved in a subdirectory of `/data/bars/` then the subdirectory must be included as well. `EXAMPLE: <bar>SubDirectory/SomeFile.xml</bar>`
 
-- Refer to `/data/bars/example.xml`.
+- Refer to `/data/bars/example.xml` for an example profile with comments.
+- Refer to `/data/bars/readme.md` to learn action bars.
