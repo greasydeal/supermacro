@@ -206,6 +206,29 @@ function AddonMessage(message)
    windower.add_to_chat(1, ('\31\200[\31\05SuperMacro\31\200]\31\207 '.. " " .. message))
 end
 
+function CreateBarXML(fileName)
+   local f = files.new('data/bars/'..fileName)
+
+   if f:exists() == false then
+      f:write('<bar>\n')
+
+      for i=1, buttonCount do
+         f:append('  <'.. i .. '>\n')
+         f:append('     <text1></text1>\n')
+         f:append('     <text2></text2>\n')
+         f:append('     <action></action>\n')
+         f:append('     <m.text1></m.text1>\n')
+         f:append('     <m.text2></m.text2>\n')
+         f:append('     <m.action></m.action>\n')
+         f:append('  </'.. i .. '>\n')
+      end
+
+      f:append('</bar>')
+   else
+      AddonMessage(fileName.. 'Already exist. Please choice another file name.')
+   end
+end
+
 function GetBarsXML()
    local playerName = windower.ffxi.get_player().name
    local f = files.new('data/profiles/'..playerName..'.xml')
@@ -239,7 +262,7 @@ function GetJobBarsXML()
    local f = files.new(fString)
 
    if f:exists() == false then
-      fString = 'data/'..playerName..'_'..playerJob..'.xml'
+      fString = 'data/profiles/'..playerName..'_'..playerJob..'.xml'
       f = files.new(fString)
       if f:exists() == false then
          AddonMessage('Missing '.. playerJob ..'\31\207 job profile for ' .. playerName .. '\31\207.')
@@ -668,6 +691,33 @@ windower.register_event('load', function()
       ChangeCursorColor()
       else
          TestFunction()
+   end
+end)
+
+windower.register_event('addon command', function(command, arg1, arg2, ...)
+   local command = command and command:lower()
+   local args = L{...}
+
+   if command == 'create' or command == 'c' then
+      if arg1 == 'bar' or arg1 == 'b' then
+         if arg2 ~= nil then
+            local fileName = arg2:lower()
+            local fileExtension = fileName:slice(-4)
+
+            if fileExtension ~= '.xml' then
+               fileName = fileName .. '.xml'
+            end
+
+            CreateBarXML(fileName)
+
+         else
+            AddonMessage('You must specify a file name with the create bar command.')
+            AddonMessage('EXAMPLE: //sm create bar mybar.xml')
+         end
+      end
+
+   elseif command == 'reload' or command == 'restart' then
+      windower.send_command('lua reload supermacro')
    end
 end)
 
