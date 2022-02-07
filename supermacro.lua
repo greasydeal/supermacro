@@ -208,11 +208,11 @@ end
 
 function GetBarsXML()
    local playerName = windower.ffxi.get_player().name
-   local f = files.new('data/'..playerName..'.xml')
+   local f = files.new('data/profiles/'..playerName..'.xml')
 
    if f:exists() == false then
-      AddonMessage('Missing data/'..playerName..'\31\207.xml character profile.')
-      AddonMessage('Creating default data/'..playerName..'\31\207.xml')
+      AddonMessage('Missing data/profiles/'..playerName..'\31\207.xml character profile.')
+      AddonMessage('Creating default data/profiles/'..playerName..'\31\207.xml')
       AddonMessage('You will need to edit this file to customize your character specific action bars.')
       AddonMessage('Visit https://github.com/greasydeal/supermacro for more info.')
       f:write('<bars>\n')
@@ -223,7 +223,7 @@ function GetBarsXML()
    if f:exists() then
       fXML = xml.read(f)
       if fXML == nil then
-         AddonMessage('Error parsing data/'..playerName..'\31\207.xml. Check for syntax errors.')
+         AddonMessage('Error parsing data/profiles/'..playerName..'\31\207.xml. Check for syntax errors.')
       else
          return fXML
       end
@@ -235,7 +235,7 @@ function GetJobBarsXML()
    local playerName = windower.ffxi.get_player().name
    local playerJob = windower.ffxi.get_player().main_job
    local playerSubJob = windower.ffxi.get_player().sub_job
-   local fString = 'data/'..playerName..'_'..playerJob..'_'..playerSubJob..'.xml'
+   local fString = 'data/profiles/'..playerName..'_'..playerJob..'_'..playerSubJob..'.xml'
    local f = files.new(fString)
 
    if f:exists() == false then
@@ -243,7 +243,7 @@ function GetJobBarsXML()
       f = files.new(fString)
       if f:exists() == false then
          AddonMessage('Missing '.. playerJob ..'\31\207 job profile for ' .. playerName .. '\31\207.')
-         AddonMessage('Creating default data/'..playerName..'_'..playerJob..'\31\207.xml')
+         AddonMessage('Creating default data/profiles/'..playerName..'_'..playerJob..'\31\207.xml')
          AddonMessage('You will need to edit this file to customize your job specific action bars.')
          AddonMessage('Visit https://github.com/greasydeal/supermacro for more info.')
          f:write('<bars>\n')
@@ -374,7 +374,7 @@ function ParseBarData()
    local jobBarCount = 0
 
    if barsXML == nil then
-      AddonMessage('Error loading data/'..playerName..'\31\207.xml. Check for syntax errors.')
+      AddonMessage('Error loading data/profiles/'..playerName..'\31\207.xml. Check for syntax errors.')
       AddonMessage('Unloading SuperMacro...')
       windower.send_command('lua unload supermacro')
    else
