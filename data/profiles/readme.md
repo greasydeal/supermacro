@@ -6,6 +6,7 @@
 - If either a global or job specific `.xml` file does not exist for your character/job at the time of load one will be generated.
 - SuperMacro will always attempt to load a global and job specific profile for the character. 
 - Action bars from both profiles will be added to the character's screen with the job specific bars on top.
+- Profile `.xml` files should be stored in `/data/profiles` folder.
 - These files must be formatted correctly or else they will not load.
 
 - Format as follows:
@@ -26,5 +27,8 @@
 - The referenced `.xml` file needs to be stored under `/data/bars/` or a subdirectory of `/dat/bars/`.
 - If the referenced `.xml` file is saved in a subdirectory of `/data/bars/` then the subdirectory must be included as well. `EXAMPLE: <bar>SubDirectory/SomeFile.xml</bar>`
 
-- Refer to `/data/bars/example.xml` for an example profile with comments.
-- Refer to `/data/bars/readme.md` to learn action bars.
+- ### Next step: Setup some macro action bar `.xml` files
+
+    - Refer to `/data/bars/example.xml` for an example profile with comments.
+
+    - Refer to `/data/bars/readme.md` or <a href='https://github.com/greasydeal/supermacro/tree/main/data/bars'>Click here</a> for more information on setting up action bars.
