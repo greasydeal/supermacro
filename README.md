@@ -11,7 +11,7 @@ SuperMacro is an addon for Windower 4 that provides a customizable macro palette
 
  - `//lua reload supermacro` will reload SuperMacro
 
-## Setting Up SuperMaco
+## Setting Up SuperMacro
  - ### Profiles
 
     - The first time SuperMacro is loaded on a character it will generate a global profile `.xml` file named `(CharacterName).xml` under the `/data/profiles` folder. It will also generate a job specific profile `.xml` file named `(CharacterName)_(JOB).xml` under the `/data/profiles/` folder.
