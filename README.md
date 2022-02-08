@@ -9,7 +9,9 @@ SuperMacro is an addon for Windower 4 that provides a customizable macro palette
 
  - SuperMacro can be loaded by typing `//lua load supermacro` into the FFXI chat input or by typing `lua load supermacro` directly into the Windower console.
 
- - `//lua reload supermacro` will reload SuperMacro
+ - `//lua reload supermacro` will reload SuperMacro.
+
+ - `//lua unload supermacro` will unload SuperMacro.
 
 ## Setting Up SuperMacro
  - ### Profiles
@@ -20,7 +22,7 @@ SuperMacro is an addon for Windower 4 that provides a customizable macro palette
 
     - Profile `.xml` files will contain `<bar>` elements that reference macro bar `.xml` files.
 
-    - The character's global and job specific profiles `.xml` files will both be used to create your custom macro palette. Each bar will stack on above previous bar starting with the globar bars and ending with job specific bars. For example, a global profile with 2 bars and a job specific profile with 1 bar would create the following layout on screen:
+    - The character's global and job specific profile `.xml` files will both be used to create your custom macro palette. Each bar will stack above the previous bar starting with the globar bars and ending with job specific bars. For example, a global profile with 2 bars and a job specific profile with 1 bar would create the following layout on screen:
 
         ```
         [JOB SPECIFIC BAR #1]
