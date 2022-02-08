@@ -13,6 +13,12 @@ SuperMacro is an addon for Windower 4 that provides a customizable macro palette
 
  - `//lua unload supermacro` will unload SuperMacro.
 
+## Using SuperMacro
+
+1. To use SuperMacro simply press and hold the 'Win' key. 
+2. Use your arrow keys to select the desired macro button with the cursor. 
+3. Press 'Enter' to trigger the selected macro button.
+
 ## Setting Up SuperMacro
  - ### Profiles
 
